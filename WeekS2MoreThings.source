@@ -1,0 +1,113 @@
+/*
+    Some important encoding specificaitons are as follows
+
+    Classic Single Combo (hamburger with one patty) -> 1
+    Classic Double With Cheese Combo (2 patties) -> 2
+    Classic Triple with Cheese Combo (3 patties) -> 3
+    Avant-Garde Quadruple with Guacamole Combo (4 patties) -> 4
+
+    -----> Biggie size: larger box of fries and drinks
+
+    1 biggie size = 5
+    2 biggie size = 6
+    3 biggie size = 7
+    4 biggie size = 8
+
+
+    checks are to be performed before the function is called.
+    infered from:
+  For all the problems below, you can assume that the input arguments to your
+  functions are of the correct types and within the correct range of values.
+*/
+
+// Q1: biggie_size(encoded_combo) takes in an encoded combo and adds 4 in response
+// to biggie sizing a combo meal
+function biggie_size(encoded_combo){
+    return encoded_combo + 4;
+}
+
+// Q2: biggie_size(encoded_biggie_combo) takes in an encoded combo and subtracts 4
+// to get the original encoded combo meal
+function unbiggie_size(encoded_biggie_combo){
+    return encoded_biggie_combo - 4;
+}
+
+// Q3: is_biggie_size(encoded_combo) returns true if a combo has been biggie sized
+// false if it hasn't
+function is_biggie_size(encoded_combo){
+    return encoded_combo > 4;
+}
+
+// consider using global variables!*
+// Q4: determines if the combo is biggie size. multiplies patty price by the number of
+// patties, and adds in biggie size extra cost where neccessary.
+function combo_price(combo){
+    const patty_price = 1.17;
+    const biggie_sized_extra = 0.5;
+    return is_biggie_size(combo) ? unbiggie_size(combo) * patty_price + biggie_sized_extra :
+            combo * patty_price;
+}
+
+// Q5: order is a collection of combos. empty_order() returns 0 representing
+// no combos in the collection
+function empty_order(){
+    return 0;
+}
+
+// Q6: add_to_order(collection, new_combo) will take in a order, multiply
+// by 10, and add the new_combo to the order.
+function add_to_order(collection, new_combo){
+    const temporary_collection = collection * 10;
+    return temporary_collection + new_combo;
+}
+
+// Q7: last_combo(collection) returns the last combo of the order
+function last_combo(collection){
+    return collection % 10;
+}
+
+// Q8: other_combos(collection) returns the original order without the last combo
+function other_combos(collection){
+    const previous_combo = last_combo(collection);
+    return (collection - previous_combo) / 10;
+}
+
+
+function place_order(collection){
+    const user_choice = parse_int(
+        prompt("Please enter a selection: (1 - 4)"),
+        10);
+    const user_smallest_size = is_biggie_size(user_choice) 
+        ? unbiggie_size(user_choice)
+        : user_choice;
+    const user_biggie_choice = parse_int(
+        prompt("Do you want a biggie size? (0 - No, 1 - Yes)"),
+        2);
+    const user_final_choice = user_biggie_choice > 0 
+        ? biggie_size(user_choice)
+        : user_choice;
+    const our_order = add_to_order(collection, user_final_choice);
+    /*const price = user_biggie_choice > 0
+        ? combo_price(biggie_size(user_choice))
+        : combo_price(user_choice);*/
+    const check = parse_int(
+        prompt("Do you wish to continue? (0 - No, 1 - Yes)"),
+        2);
+    if (check > 0){ 
+        return place_order(our_order);
+    }else{
+        return total_price(our_order, 0);
+    }
+}
+
+function total_price(collection, price) {
+    const current_price = price + combo_price(last_combo(collection));
+    const other_collection = other_combos(collection);
+    if (other_collection < 1){ 
+        return current_price;
+    } else{
+        return total_price(other_collection, current_price);
+    }
+}
+
+place_order(empty_order());

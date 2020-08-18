@@ -41,12 +41,13 @@ function is_biggie_size(encoded_combo){
     return encoded_combo > 4; 
 }
 
+// consider using global variables!*
 // Q4: determines if the combo is biggie size. multiplies patty price by the number of 
 // patties, and adds in biggie size extra cost where neccessary. 
 function combo_price(combo){
     const patty_price = 1.17;
     const biggie_sized_extra = 0.5;
-    return is_biggie_size(combo) ? (combo - 4) * patty_price + biggie_sized_extra : 
+    return is_biggie_size(combo) ? unbiggie_size(combo) * patty_price + biggie_sized_extra : 
             combo * patty_price;
 }
 
